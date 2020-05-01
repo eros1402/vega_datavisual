@@ -7,27 +7,94 @@
 
   "description": "Winning versus Foul",
 
+  "transform": [
+    {"calculate": "datum.WINorLOSS == 'W'? 1 : 0", "as": "Win"},
+
+    {"calculate": "datum.WINorLOSS == 'L'? 1 : 0", "as": "Loss"},
+
+    {"calculate": "datum.WINorLOSS == 'L'? 1 : 1", "as": "Match"},
+
+    {"joinaggregate": [{
+          "op": "sum",
+          "field": "Win",
+          "as": "TotalWinOfTeam"
+      }],
+      "groupby": [
+        "Team"
+      ]
+    },
+
+    {"joinaggregate": [{
+          "op": "sum",
+          "field": "Match",
+          "as": "TotalMatchOfTeam"
+      }],
+      "groupby": [
+        "Team"
+      ]
+    },
+
+    { "calculate": "datum.TotalWinOfTeam/datum.TotalMatchOfTeam*100", "as": "TeamWinPercent"},
+
+    {"joinaggregate": [{
+          "op": "average",
+          "field": "TotalFouls",
+          "as": "MeanFoulsOfTeam"
+      }],
+      "groupby": [
+        "Team"
+      ]
+    },
+
+    {
+      "window": [{"op": "row_number", "as": "TeamRank"}],
+      "sort": [{ "field": "TeamWinPercent", "order":"descending"}]
+    }
+
+  ],
+
   "hconcat":[
     {
       "title": "Winning ratio",
       "mark": "bar",
       "encoding": {
-
+        "y": {
+          "field": "Team",
+          "type": "nominal",    
+          "axis": null,  
+          "sort": {
+            "field": "TeamWinPercent", "order": "descending"
+          }
+        },
+        "x": {
+          "field": "TeamWinPercent",
+          "type": "quantitative",
+          "sort": "descending"
+        }
       } 
 
     },
 
     {
       "title": "Team",
+      "width": 30,
       "mark": {
         "type": "text",
         "align": "center"
       },
       "encoding": {
         "y": {
-          "field": "Team"
+          "field": "Team",
+          "type": "nominal",    
+          "axis": null,  
+          "sort": {
+            "field": "TeamWinPercent", "order": "descending"
+          }
+        },
+        "text": {
+          "field": "Team", 
+          "type": "nominal"
         }
-
       } 
     },
 
@@ -35,7 +102,18 @@
       "title": "Fouls",
       "mark": "bar",
       "encoding": {
-
+        "y": {
+          "field": "Team",
+          "type": "nominal",    
+          "axis": null,  
+          "sort": {
+            "field": "TeamWinPercent", "order": "descending"
+          }
+        },
+        "x": {
+          "field": "MeanFoulsOfTeam",
+          "type": "quantitative"
+        }
       } 
     }
   ]
