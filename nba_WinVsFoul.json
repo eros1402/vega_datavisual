@@ -1,0 +1,45 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+
+  "data": {
+    "url": "https://gist.githubusercontent.com/kangaroo2020/7afc204f5d1274051aa12dd54e8f3f9b/raw/83ac178f83235ca25ebae8f680f3bc7fb2fb7c95/nba_data2.json"
+  },
+
+  "description": "Winning versus Foul",
+
+  "hconcat":[
+    {
+      "title": "Winning ratio",
+      "mark": "bar",
+      "encoding": {
+
+      } 
+
+    },
+
+    {
+      "title": "Team",
+      "mark": {
+        "type": "text",
+        "align": "center"
+      },
+      "encoding": {
+        "y": {
+          "field": "Team"
+        }
+
+      } 
+    },
+
+    {
+      "title": "Fouls",
+      "mark": "bar",
+      "encoding": {
+
+      } 
+    }
+  ]
+
+
+
+}
