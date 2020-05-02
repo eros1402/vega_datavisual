@@ -44,18 +44,14 @@
       "groupby": [
         "Team"
       ]
-    },
-
-    {
-      "window": [{"op": "row_number", "as": "TeamRank"}],
-      "sort": [{ "field": "TeamWinPercent", "order":"descending"}]
     }
-
   ],
+
+  "spacing": 1,
 
   "hconcat":[
     {
-      "title": "Winning ratio",
+      "title": "",
       "mark": "bar",
       "encoding": {
         "y": {
@@ -67,9 +63,13 @@
           }
         },
         "x": {
+          "axis": {"title": "Percent of Win match", "format": "s"},
           "field": "TeamWinPercent",
           "type": "quantitative",
           "sort": "descending"
+        },
+        "color": {
+          "value": "mediumseagreen"
         }
       } 
 
@@ -78,6 +78,7 @@
     {
       "title": "Team",
       "width": 30,
+      "view": {"stroke": null},
       "mark": {
         "type": "text",
         "align": "center"
@@ -99,7 +100,7 @@
     },
 
     {
-      "title": "Fouls",
+      "title": "",
       "mark": "bar",
       "encoding": {
         "y": {
@@ -111,8 +112,12 @@
           }
         },
         "x": {
+          "axis": {"title": "Number of Fouls per march", "format": "s"},
           "field": "MeanFoulsOfTeam",
           "type": "quantitative"
+        },
+        "color": {
+          "value": "firebrick"
         }
       } 
     }
