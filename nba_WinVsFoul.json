@@ -14,10 +14,24 @@
 
     {"calculate": "datum.WINorLOSS == 'L'? 1 : 1", "as": "Match"},
 
+    {"calculate": "datum.WINorLOSS == 'W'? datum.TotalFouls : 0", "as": "TotalFoulsWhenWin"},
+
+    {"calculate": "datum.WINorLOSS == 'L'? datum.TotalFouls : 0", "as": "TotalFoulsWhenLoss"},
+
     {"joinaggregate": [{
           "op": "sum",
           "field": "Win",
           "as": "TotalWinOfTeam"
+      }],
+      "groupby": [
+        "Team"
+      ]
+    },
+
+    {"joinaggregate": [{
+          "op": "sum",
+          "field": "Loss",
+          "as": "TotalLossOfTeam"
       }],
       "groupby": [
         "Team"
@@ -37,9 +51,29 @@
     { "calculate": "datum.TotalWinOfTeam/datum.TotalMatchOfTeam*100", "as": "TeamWinPercent"},
 
     {"joinaggregate": [{
-          "op": "average",
+          "op": "sum",
           "field": "TotalFouls",
-          "as": "MeanFoulsOfTeam"
+          "as": "TotalFoulsOfTeam"
+      }],
+      "groupby": [
+        "Team"
+      ]
+    },
+
+    {"joinaggregate": [{
+          "op": "sum",
+          "field": "TotalFoulsWhenWin",
+          "as": "TotalFoulsWhenWinOfTeam"
+      }],
+      "groupby": [
+        "Team"
+      ]
+    },
+
+    {"joinaggregate": [{
+          "op": "sum",
+          "field": "TotalFoulsWhenLoss",
+          "as": "TotalFoulsWhenLossOfTeam"
       }],
       "groupby": [
         "Team"
@@ -63,14 +97,18 @@
           }
         },
         "x": {
-          "axis": {"title": "Percent of Win match", "format": "s"},
+          "axis": {"title": "Percent of Win", "format": "s"},
           "field": "TeamWinPercent",
           "type": "quantitative",
           "sort": "descending"
         },
         "color": {
           "value": "mediumseagreen"
-        }
+        },
+        "tooltip": [
+          {"field": "Team", "type": "nominal"},
+          {"field": "TeamWinPercent", "type": "quantitative"}
+        ]
       } 
 
     },
@@ -112,13 +150,19 @@
           }
         },
         "x": {
-          "axis": {"title": "Number of Fouls per march", "format": "s"},
-          "field": "MeanFoulsOfTeam",
+          "axis": {"title": "Total Fouls of team", "format": "s"},          
+          "field": "TotalFouls",
           "type": "quantitative"
         },
-        "color": {
-          "value": "firebrick"
-        }
+        "color": {   
+      
+          "field": "WINorLOSS",
+          "type": "nominal"
+        },
+        "tooltip": [
+          {"field": "Team", "type": "nominal"},
+          {"field": "TotalFoulsOfTeam", "type": "quantitative"}
+        ]
       } 
     }
   ]
