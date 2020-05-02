@@ -150,18 +150,24 @@
           }
         },
         "x": {
-          "axis": {"title": "Total Fouls of team", "format": "s"},          
+          "axis": {"title": "Nr of  Fouls", "format": "s"},          
           "field": "TotalFouls",
           "type": "quantitative"
         },
-        "color": {   
-      
+        "color": {         
           "field": "WINorLOSS",
+          "scale": {
+            "domain": ["W", "L"],
+            "range": ["#c30d24", "#f3a583"]
+            
+          },
           "type": "nominal"
         },
         "tooltip": [
           {"field": "Team", "type": "nominal"},
-          {"field": "TotalFoulsOfTeam", "type": "quantitative"}
+          {"field": "TotalFoulsOfTeam", "type": "quantitative"},
+          {"field": "TotalFoulsWhenWinOfTeam", "type": "quantitative"},
+          {"field": "TotalFoulsWhenLossOfTeam", "type": "quantitative"}
         ]
       } 
     }
