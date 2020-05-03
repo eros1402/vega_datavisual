@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Embedding Vega</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.10.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@4.10.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.5.2"></script>
+  </head>
+  <body>
+    <div id="vis"></div>
+
+    <script type="text/javascript">
+      var yourVlSpec = { 
+
+            {
+            "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+
+            "data": {
+              "url": "https://gist.githubusercontent.com/kangaroo2020/7afc204f5d1274051aa12dd54e8f3f9b/raw/83ac178f83235ca25ebae8f680f3bc7fb2fb7c95/nba_data2.json"
+            },
+
+            "description": "Winning versus Foul",
+
+            "transform": [
+              {"calculate": "datum.WINorLOSS == 'W'? 1 : 0", "as": "Win"},
+
+              {"calculate": "datum.WINorLOSS == 'L'? 1 : 0", "as": "Loss"},
+
+              {"calculate": "datum.WINorLOSS == 'L'? 1 : 1", "as": "Match"},
+
+              {"calculate": "datum.WINorLOSS == 'W'? datum.TotalFouls : 0", "as": "TotalFoulsWhenWin"},
+
+              {"calculate": "datum.WINorLOSS == 'L'? datum.TotalFouls : 0", "as": "TotalFoulsWhenLoss"},
+
+              {"joinaggregate": [{
+                    "op": "sum",
+                    "field": "Win",
+                    "as": "TotalWinOfTeam"
+                }],
+                "groupby": [
+                  "Team"
+                ]
+              },
+
+              {"joinaggregate": [{
+                    "op": "sum",
+                    "field": "Loss",
+                    "as": "TotalLossOfTeam"
+                }],
+                "groupby": [
+                  "Team"
+                ]
+              },
+
+              {"joinaggregate": [{
+                    "op": "sum",
+                    "field": "Match",
+                    "as": "TotalMatchOfTeam"
+                }],
+                "groupby": [
+                  "Team"
+                ]
+              },
+
+              { "calculate": "datum.TotalWinOfTeam/datum.TotalMatchOfTeam*100", "as": "TeamWinPercent"},
+
+              {"joinaggregate": [{
+                    "op": "sum",
+                    "field": "TotalFouls",
+                    "as": "TotalFoulsOfTeam"
+                }],
+                "groupby": [
+                  "Team"
+                ]
+              },
+
+              {"joinaggregate": [{
+                    "op": "sum",
+                    "field": "TotalFoulsWhenWin",
+                    "as": "TotalFoulsWhenWinOfTeam"
+                }],
+                "groupby": [
+                  "Team"
+                ]
+              },
+
+              {"joinaggregate": [{
+                    "op": "sum",
+                    "field": "TotalFoulsWhenLoss",
+                    "as": "TotalFoulsWhenLossOfTeam"
+                }],
+                "groupby": [
+                  "Team"
+                ]
+              }
+            ],
+
+            "spacing": 1,
+
+            "hconcat":[
+              {
+                "title": "",
+                "mark": "bar",
+                "encoding": {
+                  "y": {
+                    "field": "Team",
+                    "type": "nominal",    
+                    "axis": null,  
+                    "sort": {
+                      "field": "TeamWinPercent", "order": "descending"
+                    }
+                  },
+                  "x": {
+                    "axis": {"title": "Percent of Win", "format": "s"},
+                    "field": "TeamWinPercent",
+                    "type": "quantitative",
+                    "sort": "descending"
+                  },
+                  "color": {
+                    "value": "mediumseagreen"
+                  },
+                  "tooltip": [
+                    {"field": "Team", "type": "nominal"},
+                    {"field": "TeamWinPercent", "type": "quantitative"}
+                  ]
+                } 
+
+              },
+
+              {
+                "title": "Team",
+                "width": 30,
+                "view": {"stroke": null},
+                "mark": {
+                  "type": "text",
+                  "align": "center"
+                },
+                "encoding": {
+                  "y": {
+                    "field": "Team",
+                    "type": "nominal",    
+                    "axis": null,  
+                    "sort": {
+                      "field": "TeamWinPercent", "order": "descending"
+                    }
+                  },
+                  "text": {
+                    "field": "Team", 
+                    "type": "nominal"
+                  }
+                } 
+              },
+
+              {
+                "title": "",
+                "mark": "bar",
+                "encoding": {
+                  "y": {
+                    "field": "Team",
+                    "type": "nominal",    
+                    "axis": null,  
+                    "sort": {
+                      "field": "TeamWinPercent", "order": "descending"
+                    }
+                  },
+                  "x": {
+                    "axis": {"title": "Nr of  Fouls", "format": "s"},          
+                    "field": "TotalFouls",
+                    "type": "quantitative"
+                  },
+                  "color": {         
+                    "field": "WINorLOSS",
+                    "scale": {
+                      "domain": ["W", "L"],
+                      "range": ["#c30d24", "#f3a583"]
+
+                    },
+                    "type": "nominal"
+                  },
+                  "tooltip": [
+                    {"field": "Team", "type": "nominal"},
+                    {"field": "TotalFoulsOfTeam", "type": "quantitative"},
+                    {"field": "TotalFoulsWhenWinOfTeam", "type": "quantitative"},
+                    {"field": "TotalFoulsWhenLossOfTeam", "type": "quantitative"}
+                  ]
+                } 
+              }
+            ]
+          }
+
+}
+;
+      vegaEmbed('#vis', yourVlSpec);
+    </script>
+  </body>
+</html>
